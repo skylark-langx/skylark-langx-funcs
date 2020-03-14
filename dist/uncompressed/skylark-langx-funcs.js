@@ -246,6 +246,8 @@ define('skylark-langx-funcs/funcs',[
 
 
     return skylark.attach("langx.funcs",{
+        bind : proxy,
+        
         debounce: debounce,
 
         delegate: delegate,
