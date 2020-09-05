@@ -75,7 +75,7 @@
   factory(define,require);
 
   if (!isAmd) {
-    var skylarkjs = require("skylark-langx/skylark");
+    var skylarkjs = require("skylark-langx-ns");
 
     if (isCmd) {
       module.exports = skylarkjs;
@@ -88,15 +88,54 @@
 
 define('skylark-langx-funcs/funcs',[
   "skylark-langx-ns/ns",
-  "skylark-langx-types",
-  "skylark-langx-objects"
 ],function(skylark,types,objects){
-	var mixin = objects.mixin,
-        slice = Array.prototype.slice,
-        isFunction = types.isFunction,
-        isString = types.isString;
+        
 
-    function defer(fn) {
+
+
+    function noop() {
+    }
+
+
+
+
+    return skylark.attach("langx.funcs",{
+        noop : noop,
+
+        returnTrue: function() {
+            return true;
+        },
+
+        returnFalse: function() {
+            return false;
+        }
+
+    });
+});
+define('skylark-langx-funcs/debounce',[
+	"./funcs"
+],function(funcs){
+   
+    function debounce(fn, wait) {
+        var timeout;
+        return function () {
+            var context = this, args = arguments;
+            var later = function () {
+                timeout = null;
+                fn.apply(context, args);
+            };
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    return funcs.debounce = debounce;
+
+});
+define('skylark-langx-funcs/defer',[
+	"./funcs"
+],function(funcs){
+	function defer(fn) {
         if (requestAnimationFrame) {
             requestAnimationFrame(fn);
         } else {
@@ -105,8 +144,138 @@ define('skylark-langx-funcs/funcs',[
         return this;
     }
 
-    function noop() {
+    return funcs.defer = defer;
+});
+define('skylark-langx-funcs/delegate',[
+  "skylark-langx-objects",
+  "./funcs"
+],function(objects,funcs){
+	var mixin = objects.mixin;
+
+    var delegate = (function() {
+        // boodman/crockford delegation w/ cornford optimization
+        function TMP() {}
+        return function(obj, props) {
+            TMP.prototype = obj;
+            var tmp = new TMP();
+            TMP.prototype = null;
+            if (props) {
+                mixin(tmp, props);
+            }
+            return tmp; // Object
+        };
+    })();
+
+    return funcs.delegate = delegate;
+
+});
+define('skylark-langx-funcs/loop',[
+	"./funcs"
+],function(funcs){
+
+	/**
+	 * Animation timer is a special type of timer that uses the requestAnimationFrame method.
+	 *
+	 * This timer calls the method with the same rate as the screen refesh rate.
+	 * 
+	 * Loop time can be changed dinamically.
+	 *
+	 * @class AnimationTimer
+	 * @param {Function} callback Timer callback function.
+	 */
+	function AnimationTimer(callback)
+	{
+		this.callback = callback;
+
+		this.running = false;
+		this.id = -1;
+	}
+
+	/**
+	 * Start timer, is the timer is already running dosen't do anything.
+	 * 
+	 * @method start
+	 */
+	AnimationTimer.prototype.start = function()
+	{
+		if(this.running)
+		{
+			return;
+		}
+
+		this.running = true;
+
+		var self = this;
+		function run()
+		{
+			self.callback();
+
+			if(self.running)
+			{
+				self.id = requestAnimationFrame(run);
+			}
+		}
+
+		run();
+	};
+
+	/**
+	 * Stop animation timer.
+	 * 
+	 * @method stop
+	 */
+	AnimationTimer.prototype.stop = function()
+	{
+		this.running = false;
+		cancelAnimationFrame(this.id);
+	};
+
+	function loop(fn) {
+		return new AnimationTimer(fn);
     }
+
+    return funcs.loop = loop;
+});
+define('skylark-langx-funcs/negate',[
+	"./funcs"
+],function(funcs){
+   
+    /**
+     * Creates a function that negates the result of the predicate `func`. The
+     * `func` predicate is invoked with the `this` binding and arguments of the
+     * created function.
+     * @category Function
+     * @param {Function} predicate The predicate to negate.
+     * @returns {Function} Returns the new negated function.
+     * @example
+     *
+     * function isEven(n) {
+     *   return n % 2 == 0
+     * }
+     *
+     * filter([1, 2, 3, 4, 5, 6], negate(isEven))
+     * // => [1, 3, 5]
+     */
+    function negate(predicate) {
+      if (typeof predicate !== 'function') {
+        throw new TypeError('Expected a function')
+      }
+      return function(...args) {
+        return !predicate.apply(this, args)
+      }
+    }
+
+
+    return funcs.negate = negate;
+
+});
+define('skylark-langx-funcs/proxy',[
+  "skylark-langx-types",
+	"./funcs"
+],function(types,funcs){
+    var slice = Array.prototype.slice,
+        isFunction = types.isFunction,
+        isString = types.isString;
 
     function proxy(fn, context) {
         var args = (2 in arguments) && slice.call(arguments, 2)
@@ -127,34 +296,15 @@ define('skylark-langx-funcs/funcs',[
         }
     }
 
-    function debounce(fn, wait) {
-        var timeout;
-        return function () {
-            var context = this, args = arguments;
-            var later = function () {
-                timeout = null;
-                fn.apply(context, args);
-            };
-            if (timeout) clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
+    return funcs.bind = funcs.proxy = proxy;
+
+});
+define('skylark-langx-funcs/template',[
+	"./funcs"
+],function(funcs){
+    var slice = Array.prototype.slice;
+
    
-    var delegate = (function() {
-        // boodman/crockford delegation w/ cornford optimization
-        function TMP() {}
-        return function(obj, props) {
-            TMP.prototype = obj;
-            var tmp = new TMP();
-            TMP.prototype = null;
-            if (props) {
-                mixin(tmp, props);
-            }
-            return tmp; // Object
-        };
-    })();
-
-
     // By default, Underscore uses ERB-style template delimiters, change the
     // following template settings to use alternative delimiters.
     var templateSettings = {
@@ -244,62 +394,20 @@ define('skylark-langx-funcs/funcs',[
         return template;
     }
 
+    template.templateSettings = funcs.templateSettings = templateSettings;
 
-    /**
-     * Creates a function that negates the result of the predicate `func`. The
-     * `func` predicate is invoked with the `this` binding and arguments of the
-     * created function.
-     * @category Function
-     * @param {Function} predicate The predicate to negate.
-     * @returns {Function} Returns the new negated function.
-     * @example
-     *
-     * function isEven(n) {
-     *   return n % 2 == 0
-     * }
-     *
-     * filter([1, 2, 3, 4, 5, 6], negate(isEven))
-     * // => [1, 3, 5]
-     */
-    function negate(predicate) {
-      if (typeof predicate !== 'function') {
-        throw new TypeError('Expected a function')
-      }
-      return function(...args) {
-        return !predicate.apply(this, args)
-      }
-    }
+    return funcs.template = template;
 
-
-    return skylark.attach("langx.funcs",{
-        bind : proxy,
-        
-        debounce: debounce,
-
-        delegate: delegate,
-
-        defer: defer,
-
-        negate: negate,
-
-        noop : noop,
-
-        proxy: proxy,
-
-        returnTrue: function() {
-            return true;
-        },
-
-        returnFalse: function() {
-            return false;
-        },
-
-        templateSettings : templateSettings,
-        template : template
-    });
 });
 define('skylark-langx-funcs/main',[
-	"./funcs"
+	"./funcs",
+	"./debounce",
+	"./defer",
+	"./delegate",
+	"./loop",
+	"./negate",
+	"./proxy",
+	"./template"
 ],function(funcs){
 	return funcs;
 });
