@@ -10,8 +10,18 @@ define([
                 timeout = null;
                 fn.apply(context, args);
             };
-            if (timeout) clearTimeout(timeout);
+
+            function stop() {
+                if (timeout) clearTimeout(timeout);
+                timeout = void 0;
+            }
+
+            stop();
             timeout = setTimeout(later, wait);
+
+            return {
+                stop 
+            };
         };
     }
 

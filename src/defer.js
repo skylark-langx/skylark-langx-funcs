@@ -1,13 +1,23 @@
 define([
-	"./funcs"
+    "./funcs"
 ],function(funcs){
-	function defer(fn) {
+    function defer(fn) {
+        var ret = {
+            stop : null
+        },
+        id ;
         if (requestAnimationFrame) {
-            requestAnimationFrame(fn);
+            id = requestAnimationFrame(fn);
+            ret.stop = function() {
+                return cancelAnimationFrame(id);
+            };
         } else {
-            setTimeoutout(fn);
+            id = setTimeoutout(fn);
+            ret.stop = function() {
+                return clearTimeout(id);
+            };
         }
-        return this;
+        return ret;
     }
 
     return funcs.defer = defer;
