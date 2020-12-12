@@ -87,7 +87,7 @@
 })(function(define,require) {
 
 define('skylark-langx-funcs/funcs',[
-  "skylark-langx-ns/ns",
+  "skylark-langx-ns",
 ],function(skylark,types,objects){
         
 
