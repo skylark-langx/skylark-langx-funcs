@@ -145,18 +145,25 @@ define('skylark-langx-funcs/debounce',[
 define('skylark-langx-funcs/defer',[
     "./funcs"
 ],function(funcs){
-    function defer(fn) {
+    function defer(fn,args,context) {
         var ret = {
             stop : null
         },
-        id ;
+        id,
+        fn1 = fn;
+
+        if (args) {
+            fn1 = function() {
+                fn.apply(context,args);
+            };
+        }
         if (requestAnimationFrame) {
-            id = requestAnimationFrame(fn);
+            id = requestAnimationFrame(fn1);
             ret.stop = function() {
                 return cancelAnimationFrame(id);
             };
         } else {
-            id = setTimeoutout(fn);
+            id = setTimeoutout(fn1);
             ret.stop = function() {
                 return clearTimeout(id);
             };

@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["./funcs"],function(n){return n.defer=function(n){var e,t={stop:null};return requestAnimationFrame?(e=requestAnimationFrame(n),t.stop=function(){return cancelAnimationFrame(e)}):(e=setTimeoutout(n),t.stop=function(){return clearTimeout(e)}),t}});
+define(["./funcs"],function(n){return n.defer=function(n,t,e){var r,u={stop:null},i=n;return t&&(i=function(){n.apply(e,t)}),requestAnimationFrame?(r=requestAnimationFrame(i),u.stop=function(){return cancelAnimationFrame(r)}):(r=setTimeoutout(i),u.stop=function(){return clearTimeout(r)}),u}});
 //# sourceMappingURL=sourcemaps/defer.js.map
