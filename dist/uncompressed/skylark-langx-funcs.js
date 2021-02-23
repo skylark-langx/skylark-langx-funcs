@@ -327,8 +327,10 @@ define('skylark-langx-funcs/proxy',[
 
 });
 define('skylark-langx-funcs/template',[
-	"./funcs"
-],function(funcs){
+  "skylark-langx-objects",
+  "./funcs",
+  "./proxy"
+],function(objects,funcs,proxy){
     var slice = Array.prototype.slice;
 
    
