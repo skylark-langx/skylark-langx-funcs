@@ -112,36 +112,6 @@ define('skylark-langx-funcs/funcs',[
 
     });
 });
-define('skylark-langx-funcs/debounce',[
-	"./funcs"
-],function(funcs){
-   
-    function debounce(fn, wait) {
-        var timeout;
-        return function () {
-            var context = this, args = arguments;
-            var later = function () {
-                timeout = null;
-                fn.apply(context, args);
-            };
-
-            function stop() {
-                if (timeout) clearTimeout(timeout);
-                timeout = void 0;
-            }
-
-            stop();
-            timeout = setTimeout(later, wait);
-
-            return {
-                stop 
-            };
-        };
-    }
-
-    return funcs.debounce = debounce;
-
-});
 define('skylark-langx-funcs/defer',[
     "./funcs"
 ],function(funcs){
@@ -172,6 +142,49 @@ define('skylark-langx-funcs/defer',[
     }
 
     return funcs.defer = defer;
+});
+define('skylark-langx-funcs/debounce',[
+	"./funcs",
+    "./defer"
+],function(funcs,defer){
+   
+    function debounce(fn, wait,useAnimationFrame) {
+        var timeout,
+            defered;
+
+        return function () {
+            var context = this, args = arguments;
+            var later = function () {
+                timeout = null;
+                if (useAnimationFrame) {
+                    defered = defer(fn,args,context);
+                } else {
+                    fn.apply(context, args);
+                }
+            };
+
+            function stop() {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                if (defered) {
+                    defered.stop();
+                }
+                timeout = void 0;
+                defered = void 0;
+            }
+
+            stop();
+            timeout = setTimeout(later, wait);
+
+            return {
+                stop 
+            };
+        };
+    }
+
+    return funcs.debounce = debounce;
+
 });
 define('skylark-langx-funcs/delegate',[
   "skylark-langx-objects",
