@@ -441,6 +441,24 @@ define('skylark-langx-funcs/template',[
     return funcs.template = template;
 
 });
+define('skylark-langx-funcs/throttle',[
+  "./funcs"
+],function(funcs){
+
+    const throttle = function (fn, wait) {
+        let last = window.performance.now();
+        const throttled = function (...args) {
+            const now = window.performance.now();
+            if (now - last >= wait) {
+                fn(...args);
+                last = now;
+            }
+        };
+        return throttled;
+    };
+
+    return funcs.throttle = throttle;
+});
 define('skylark-langx-funcs/main',[
 	"./funcs",
 	"./debounce",
@@ -449,7 +467,8 @@ define('skylark-langx-funcs/main',[
 	"./loop",
 	"./negate",
 	"./proxy",
-	"./template"
+	"./template",
+	"./throttle"
 ],function(funcs){
 	return funcs;
 });
