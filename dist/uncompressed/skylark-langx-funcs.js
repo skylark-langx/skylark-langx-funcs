@@ -113,31 +113,55 @@ define('skylark-langx-funcs/funcs',[
     });
 });
 define('skylark-langx-funcs/defer',[
+    "skylark-langx-types",
     "./funcs"
-],function(funcs){
-    function defer(fn,args,context) {
+],function(types,funcs){
+
+    function defer(fn,trigger,args,context) {
         var ret = {
             cancel : null
         },
-        id,
         fn1 = fn;
+
+        if (!types.isNumber(trigger) && !types.isFunction(trigger)) {
+            context = args;
+            args = trigger;
+            trigger = 0;
+        }
 
         if (args) {
             fn1 = function() {
                 fn.apply(context,args);
             };
         }
-        if (requestAnimationFrame) {
-            id = requestAnimationFrame(fn1);
+
+        if (types.isFunction(trigger)) {
+            var canceled = false;
+            trigger(function(){
+                if (!canceled) {
+                    fn1();
+                }
+            });
+
             ret.cancel = function() {
-                return cancelAnimationFrame(id);
-            };
+                canceled = true;
+            }
+
         } else {
-            id = setTimeoutout(fn1);
-            ret.cancel = function() {
-                return clearTimeout(id);
-            };
+            var  id;
+            if (trigger == 0 && requestAnimationFrame) {
+                id = requestAnimationFrame(fn1);
+                ret.cancel = function() {
+                    return cancelAnimationFrame(id);
+                };
+            } else {
+                id = setTimeoutout(fn1,trigger);
+                ret.cancel = function() {
+                    return clearTimeout(id);
+                };
+            }            
         }
+
         return ret;
     }
 
