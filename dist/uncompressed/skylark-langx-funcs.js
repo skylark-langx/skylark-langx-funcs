@@ -117,7 +117,7 @@ define('skylark-langx-funcs/defer',[
 ],function(funcs){
     function defer(fn,args,context) {
         var ret = {
-            stop : null
+            cancel : null
         },
         id,
         fn1 = fn;
@@ -129,12 +129,12 @@ define('skylark-langx-funcs/defer',[
         }
         if (requestAnimationFrame) {
             id = requestAnimationFrame(fn1);
-            ret.stop = function() {
+            ret.cancel = function() {
                 return cancelAnimationFrame(id);
             };
         } else {
             id = setTimeoutout(fn1);
-            ret.stop = function() {
+            ret.cancel = function() {
                 return clearTimeout(id);
             };
         }
@@ -174,7 +174,7 @@ define('skylark-langx-funcs/debounce',[
                     clearTimeout(timeout);
                 }
                 if (defered) {
-                    defered.stop();
+                    defered.cancel();
                 }
                 timeout = void 0;
                 defered = void 0;

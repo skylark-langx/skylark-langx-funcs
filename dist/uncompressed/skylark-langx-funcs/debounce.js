@@ -29,7 +29,7 @@ define([
                     clearTimeout(timeout);
                 }
                 if (defered) {
-                    defered.stop();
+                    defered.cancel();
                 }
                 timeout = void 0;
                 defered = void 0;

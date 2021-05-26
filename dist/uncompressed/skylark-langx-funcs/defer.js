@@ -3,7 +3,7 @@ define([
 ],function(funcs){
     function defer(fn,args,context) {
         var ret = {
-            stop : null
+            cancel : null
         },
         id,
         fn1 = fn;
@@ -15,12 +15,12 @@ define([
         }
         if (requestAnimationFrame) {
             id = requestAnimationFrame(fn1);
-            ret.stop = function() {
+            ret.cancel = function() {
                 return cancelAnimationFrame(id);
             };
         } else {
             id = setTimeoutout(fn1);
-            ret.stop = function() {
+            ret.cancel = function() {
                 return clearTimeout(id);
             };
         }
