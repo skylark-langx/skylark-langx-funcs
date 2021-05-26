@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["./funcs","./defer"],function(n,t){return n.debounce=function(n,e,u){var o,i;return function(){var r=this,c=arguments;function f(){o&&clearTimeout(o),i&&i.stop(),o=void 0,i=void 0}return f(),o=setTimeout(function(){o=null,u?i=t(n,c,r):n.apply(r,c)},e),{stop:f}}}});
+define(["./funcs","./defer"],function(n,e){return n.debounce=function(n,t,u){var c,i,o=function(){var o=this,f=arguments;return r(),c=setTimeout(function(){c=null,u?i=e(n,f,o):n.apply(o,f)},t),{cancel:r}},r=o.cancel=function(){c&&clearTimeout(c),i&&i.stop(),c=void 0,i=void 0};return o}});
 //# sourceMappingURL=sourcemaps/debounce.js.map
