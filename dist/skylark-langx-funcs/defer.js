@@ -5,5 +5,5 @@
  * @link www.skylarkjs.org
  * @license MIT
  */
-define(["skylark-langx-types","./funcs"],function(n,e){return e.defer=function(e,t,i,c){var u={cancel:null},r=e;if(n.isNumber(t)||n.isFunction(t)||(c=i,i=t,t=0),i&&(r=function(){e.apply(c,i)}),n.isFunction(t)){var a=!1;t(function(){a||r()}),u.cancel=function(){a=!0}}else{var o;0==t&&requestAnimationFrame?(o=requestAnimationFrame(r),u.cancel=function(){return cancelAnimationFrame(o)}):(o=setTimeoutout(r,t),u.cancel=function(){return clearTimeout(o)})}return u}});
+define(["skylark-langx-types","./funcs"],function(n,e){return e.defer=function(e,i,t,c){var r={cancel:null},u=e;if(n.isNumber(i)||n.isFunction(i)||(c=t,t=i,i=0),t&&(u=function(){e.apply(c,t)}),n.isFunction(i)){var a=!1;i(function(){a||u()}),r.cancel=function(){a=!0}}else{var o;0==i&&requestAnimationFrame?(o=requestAnimationFrame(u),r.cancel=function(){return cancelAnimationFrame(o)}):(o=setTimeout(u,i),r.cancel=function(){return clearTimeout(o)})}return r}});
 //# sourceMappingURL=sourcemaps/defer.js.map
