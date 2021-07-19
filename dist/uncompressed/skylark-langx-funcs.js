@@ -368,8 +368,8 @@ define('skylark-langx-funcs/template',[
   "./funcs",
   "./proxy"
 ],function(objects,funcs,proxy){
+    //ref : underscore
     var slice = Array.prototype.slice;
-
    
     // By default, Underscore uses ERB-style template delimiters, change the
     // following template settings to use alternative delimiters.
@@ -480,6 +480,25 @@ define('skylark-langx-funcs/throttle',[
         };
         return throttled;
     };
+
+    /*
+    function throttle(func, delay) {
+        var timer = null;
+
+        return function() {
+            var context = this,
+                args = arguments;
+
+            if ( timer === null ) {
+                timer = setTimeout(function() {
+                    func.apply(context, args);
+                    timer = null;
+                }, delay);
+            }
+        };
+    }
+    */
+
 
     return funcs.throttle = throttle;
 });
