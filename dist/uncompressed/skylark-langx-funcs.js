@@ -112,6 +112,60 @@ define('skylark-langx-funcs/funcs',[
 
     });
 });
+define('skylark-langx-funcs/rest_arguments',[
+	"./funcs"
+],function(funcs){
+
+  // Some functions take a variable number of arguments, or a few expected
+  // arguments at the beginning and then a variable number of values to operate
+  // on. This helper accumulates all remaining arguments past the function’s
+  // argument length (or an explicit `startIndex`), into an array that becomes
+  // the last argument. Similar to ES6’s "rest parameter".
+  function restArguments(func, startIndex) {
+    startIndex = startIndex == null ? func.length - 1 : +startIndex;
+    return function() {
+      var length = Math.max(arguments.length - startIndex, 0),
+          rest = Array(length),
+          index = 0;
+      for (; index < length; index++) {
+        rest[index] = arguments[index + startIndex];
+      }
+      switch (startIndex) {
+        case 0: return func.call(this, rest);
+        case 1: return func.call(this, arguments[0], rest);
+        case 2: return func.call(this, arguments[0], arguments[1], rest);
+      }
+      var args = Array(startIndex + 1);
+      for (index = 0; index < startIndex; index++) {
+        args[index] = arguments[index];
+      }
+      args[startIndex] = rest;
+      return func.apply(this, args);
+    };
+  }
+
+  return funcs.restArguments = restArguments;	
+});
+define('skylark-langx-funcs/bind_all',[
+	"./funcs",
+	"./rest_arguments"
+],function(funcs,restArguments){
+
+  // Bind a number of an object's methods to that object. Remaining arguments
+  // are the method names to be bound. Useful for ensuring that all callbacks
+  // defined on an object belong to it.
+  return funcs.bindAll = restArguments(function(obj, keys) {
+    ///keys = flatten(keys, false, false);
+    var index = keys.length;
+    if (index < 1) throw new Error('bindAll must be passed function names');
+    while (index--) {
+      var key = keys[index];
+      obj[key] = obj[key].bind(obj);
+    }
+  });
+
+});
+
 define('skylark-langx-funcs/defer',[
     "skylark-langx-types",
     "./funcs"
@@ -504,6 +558,7 @@ define('skylark-langx-funcs/throttle',[
 });
 define('skylark-langx-funcs/main',[
 	"./funcs",
+	"./bind_all",
 	"./debounce",
 	"./defer",
 	"./delegate",
