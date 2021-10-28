@@ -1,6 +1,6 @@
 define([
 	"./funcs",
-	"./rest_arguments"
+	"./rest-arguments"
 ],function(funcs,restArguments){
 
   // Bind a number of an object's methods to that object. Remaining arguments

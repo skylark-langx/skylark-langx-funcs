@@ -1,6 +1,6 @@
 define([
 	"./funcs",
-	"./bind_all",
+	"./bind-all",
 	"./debounce",
 	"./defer",
 	"./delegate",

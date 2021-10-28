@@ -112,7 +112,7 @@ define('skylark-langx-funcs/funcs',[
 
     });
 });
-define('skylark-langx-funcs/rest_arguments',[
+define('skylark-langx-funcs/rest-arguments',[
 	"./funcs"
 ],function(funcs){
 
@@ -146,9 +146,9 @@ define('skylark-langx-funcs/rest_arguments',[
 
   return funcs.restArguments = restArguments;	
 });
-define('skylark-langx-funcs/bind_all',[
+define('skylark-langx-funcs/bind-all',[
 	"./funcs",
-	"./rest_arguments"
+	"./rest-arguments"
 ],function(funcs,restArguments){
 
   // Bind a number of an object's methods to that object. Remaining arguments
@@ -558,7 +558,7 @@ define('skylark-langx-funcs/throttle',[
 });
 define('skylark-langx-funcs/main',[
 	"./funcs",
-	"./bind_all",
+	"./bind-all",
 	"./debounce",
 	"./defer",
 	"./delegate",
