@@ -7,6 +7,7 @@ define([
 	"./loop",
 	"./negate",
 	"./proxy",
+	"./rest-arguments",
 	"./template",
 	"./throttle"
 ],function(funcs){

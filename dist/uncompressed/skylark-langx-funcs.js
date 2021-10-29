@@ -565,6 +565,7 @@ define('skylark-langx-funcs/main',[
 	"./loop",
 	"./negate",
 	"./proxy",
+	"./rest-arguments",
 	"./template",
 	"./throttle"
 ],function(funcs){
