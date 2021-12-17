@@ -36,6 +36,7 @@ define([
         } else {
             var  id;
             if (trigger == 0 && requestAnimationFrame) {
+                //setImmediate
                 id = requestAnimationFrame(fn1);
                 ret.cancel = function() {
                     return cancelAnimationFrame(id);

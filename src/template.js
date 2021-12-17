@@ -35,7 +35,7 @@ define([
     var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
 
 
-    function template(text, data, settings) {
+    function template(text, settings) {
         var render;
         settings = objects.defaults({}, settings,templateSettings);
 
@@ -81,9 +81,10 @@ define([
           throw e;
         }
 
-        if (data) {
-          return render(data,this)
-        }
+        ///if (data) {
+        ///  return render(data,this)
+        ///}
+        
         var template = proxy(function(data) {
           return render.call(this, data,this);
         },this);
